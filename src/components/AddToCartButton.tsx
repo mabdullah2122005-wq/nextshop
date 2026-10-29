@@ -2,31 +2,35 @@
 
 import { useState } from "react";
 import { useCart, type CartItem } from "./CartProvider";
+import { useToast } from "./ToastProvider";
 
 export function AddToCartButton({ product, stock }: { product: Omit<CartItem, "quantity">; stock: number }) {
-  const { add } = useCart();
+  const { add, items } = useCart();
+  const toast = useToast();
   const [qty, setQty] = useState(1);
-  const [added, setAdded] = useState(false);
 
-  if (stock === 0) return <button className="btn w-full sm:w-auto" disabled>Sold out</button>;
+  if (stock === 0) return <button className="btn w-full" disabled>Sold out</button>;
+
+  const inCart = items.find((i) => i.productId === product.productId)?.quantity ?? 0;
+  const max = Math.max(0, Math.min(stock, 99) - inCart);
 
   return (
-    <div className="flex flex-wrap items-center gap-3">
-      <label className="sr-only" htmlFor="qty">Quantity</label>
-      <select id="qty" value={qty} onChange={(e) => setQty(Number(e.target.value))} className="input w-20">
-        {Array.from({ length: Math.min(stock, 10) }, (_, i) => i + 1).map((n) => (
-          <option key={n} value={n}>{n}</option>
-        ))}
-      </select>
+    <div className="flex gap-3">
+      <div className="flex items-center rounded-full border border-ink/15 bg-white">
+        <button onClick={() => setQty((q) => Math.max(1, q - 1))} className="px-4 py-3 text-lg leading-none" aria-label="Decrease quantity">−</button>
+        <span className="w-8 text-center font-medium" aria-live="polite">{qty}</span>
+        <button onClick={() => setQty((q) => Math.min(Math.max(1, max), q + 1))} className="px-4 py-3 text-lg leading-none" aria-label="Increase quantity">+</button>
+      </div>
       <button
-        className="btn"
+        className="btn flex-1"
+        disabled={max === 0}
         onClick={() => {
-          add(product, qty);
-          setAdded(true);
-          setTimeout(() => setAdded(false), 1500);
+          add(product, Math.min(qty, max));
+          toast(`${product.name} added to cart`);
+          setQty(1);
         }}
       >
-        {added ? "Added ✓" : "Add to cart"}
+        {max === 0 ? "Max quantity in cart" : "Add to cart"}
       </button>
     </div>
   );

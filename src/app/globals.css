@@ -2,35 +2,80 @@
 
 /* Brand tokens — swap these for the client's branding. */
 @theme inline {
-  --color-brand: #1f3a5f;
-  --color-brand-dark: #142740;
-  --color-accent: #e07a3f;
+  --color-ink: #17171a;
+  --color-cream: #f7f4ef;
+  --color-sand: #ece6dc;
+  --color-brand: #1e3a34;
+  --color-brand-dark: #142824;
+  --color-accent: #c0643a;
+  --color-gold: #b8915a;
   --font-sans: var(--font-geist-sans);
+  --font-display: var(--font-fraunces);
   --font-mono: var(--font-geist-mono);
 }
 
 body {
-  background: #fafaf9;
-  color: #1c1917;
+  background: var(--color-cream);
+  color: var(--color-ink);
 }
 
 @layer components {
   .btn {
-    @apply inline-flex items-center justify-center gap-2 rounded-lg bg-brand px-5 py-2.5 text-sm font-medium text-white transition hover:bg-brand-dark disabled:cursor-not-allowed disabled:opacity-50;
+    @apply inline-flex items-center justify-center gap-2 rounded-full bg-brand px-6 py-3 text-sm font-medium tracking-wide text-white transition hover:bg-brand-dark active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50;
+  }
+  .btn-accent {
+    @apply inline-flex items-center justify-center gap-2 rounded-full bg-accent px-6 py-3 text-sm font-medium tracking-wide text-white transition hover:brightness-110 active:scale-[0.98];
   }
   .btn-outline {
-    @apply inline-flex items-center justify-center gap-2 rounded-lg border border-stone-300 bg-white px-5 py-2.5 text-sm font-medium text-stone-800 transition hover:bg-stone-100;
+    @apply inline-flex items-center justify-center gap-2 rounded-full border border-ink/20 bg-white px-6 py-3 text-sm font-medium text-ink transition hover:border-ink;
+  }
+  .btn-light {
+    @apply inline-flex items-center justify-center gap-2 rounded-full bg-white px-6 py-3 text-sm font-medium text-ink transition hover:bg-cream;
   }
   .input {
-    @apply w-full rounded-lg border border-stone-300 bg-white px-3 py-2 text-sm outline-none focus:border-brand focus:ring-2 focus:ring-brand/20;
+    @apply w-full rounded-xl border border-ink/15 bg-white px-4 py-2.5 text-sm outline-none transition placeholder:text-ink/40 focus:border-brand focus:ring-4 focus:ring-brand/10;
   }
   .label {
-    @apply mb-1 block text-sm font-medium text-stone-700;
+    @apply mb-1.5 block text-sm font-medium text-ink/80;
   }
   .card {
-    @apply rounded-xl border border-stone-200 bg-white;
+    @apply rounded-2xl border border-ink/8 bg-white;
   }
   .container-page {
-    @apply mx-auto w-full max-w-6xl px-4 sm:px-6;
+    @apply mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8;
   }
+  .eyebrow {
+    @apply text-xs font-semibold tracking-[0.2em] text-accent uppercase;
+  }
+  .heading {
+    @apply font-display font-medium tracking-tight;
+  }
+  .skeleton {
+    @apply animate-pulse rounded-xl bg-sand;
+  }
+}
+
+@keyframes slide-in-right {
+  from { transform: translateX(100%); }
+  to { transform: translateX(0); }
+}
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes toast-in {
+  from { opacity: 0; transform: translateY(12px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+@keyframes ken-burns {
+  from { transform: scale(1); }
+  to { transform: scale(1.08); }
+}
+.animate-drawer { animation: slide-in-right 0.3s cubic-bezier(0.22, 1, 0.36, 1); }
+.animate-fade { animation: fade-in 0.25s ease-out; }
+.animate-toast { animation: toast-in 0.3s cubic-bezier(0.22, 1, 0.36, 1); }
+.animate-ken-burns { animation: ken-burns 7s ease-out forwards; }
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-drawer, .animate-fade, .animate-toast, .animate-ken-burns { animation: none; }
 }

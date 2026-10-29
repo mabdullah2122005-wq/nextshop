@@ -8,7 +8,7 @@ export async function getStoreStats(days = 14) {
   since.setHours(0, 0, 0, 0);
   since.setDate(since.getDate() - (days - 1));
 
-  const [revenue, paidOrders, pendingOrders, customers, lowStock, recentPaid, topItems] = await Promise.all([
+  const [revenue, paidOrders, pendingOrders, customers, lowStock, recentPaid, topItems, subscribers, recentOrders] = await Promise.all([
     prisma.order.aggregate({ _sum: { totalCents: true }, where: { status: { in: [...PAID_STATUSES] } } }),
     prisma.order.count({ where: { status: { in: [...PAID_STATUSES] } } }),
     prisma.order.count({ where: { status: "PAID" } }),
@@ -24,6 +24,13 @@ export async function getStoreStats(days = 14) {
       _sum: { quantity: true },
       orderBy: { _sum: { quantity: "desc" } },
       take: 5,
+    }),
+    prisma.newsletterSubscriber.count(),
+    prisma.order.findMany({
+      where: { status: { not: "PENDING" } },
+      orderBy: { createdAt: "desc" },
+      take: 5,
+      select: { id: true, email: true, totalCents: true, status: true, createdAt: true },
     }),
   ]);
 
@@ -47,6 +54,8 @@ export async function getStoreStats(days = 14) {
     paidOrders,
     awaitingFulfilment: pendingOrders,
     customers,
+    subscribers,
+    recentOrders,
     averageOrderCents: paidOrders ? Math.round(revenueCents / paidOrders) : 0,
     lowStock,
     daily,

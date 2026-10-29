@@ -88,7 +88,9 @@ Customers will then receive a welcome email, an order confirmation, and shipping
 
 ## Step 5: Add your products and branding
 - **Products:** go to **Admin → Products → New product**. Paste an image URL, then set the price, stock and category. To hide the demo products, open each one and untick **Visible in store**, or delete it.
-- **Store name:** change `NEXT_PUBLIC_STORE_NAME` in Vercel and redeploy.
+- **Discount codes:** go to **Admin → Discounts**. The demo code `WELCOME10` gives 10% off orders of $30 or more; disable it or create your own.
+- **Store name and banner:** change `NEXT_PUBLIC_STORE_NAME` and `NEXT_PUBLIC_ANNOUNCEMENT` (the text in the top bar) in Vercel, then redeploy.
+- **Support email:** replace `support@example.com` in `src/app/faq/page.tsx`.
 - **Colours and logo:** edit `src/app/globals.css` in the repo (`--color-brand` and `--color-accent`). Every push to GitHub redeploys automatically.
 
 ---
@@ -98,6 +100,7 @@ Customers will then receive a welcome email, an order confirmation, and shipping
 | --- | --- |
 | See sales, revenue and low stock | **Admin → Dashboard** |
 | Ship an order | **Admin → Orders**, filter **PAID**, then set the status to **SHIPPED** (the customer is emailed) |
+| Run a promotion | **Admin → Discounts**, then create a code. To show a product as on sale, set its **Compare-at price** in **Admin → Products**. |
 | Add or edit products | **Admin → Products** |
 | Give someone admin access | **Admin → Users** |
 

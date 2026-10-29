@@ -53,6 +53,17 @@ export async function sendShippingUpdate(email: string, orderId: string, status:
   );
 }
 
+export async function sendPasswordReset(email: string, url: string) {
+  await send(
+    email,
+    "Reset your password",
+    `<p>We received a request to reset your password.</p>
+     <p><a href="${escape(url)}">Choose a new password</a> (link valid for 1 hour).</p>
+     <p>If you didn't request this, you can safely ignore this email.</p>`,
+  );
+  if (!process.env.RESEND_API_KEY) console.info(`[email:dev] reset link: ${url}`);
+}
+
 export async function sendWelcome(email: string, name?: string | null) {
   await send(email, "Welcome to the store", `<p>Hi ${escape(name ?? "there")}, your account is ready.</p>`);
 }

@@ -1,27 +1,31 @@
-﻿# NextShop â€” Full-stack e-commerce on Next.js
+# NextShop — Full-stack e-commerce on Next.js
 
-A production-ready e-commerce starter: storefront, cart, Stripe checkout, customer accounts, and an admin panel with analytics â€” all in one Next.js 16 (App Router) codebase.
+A production-ready e-commerce starter: storefront, cart, Stripe checkout, customer accounts, and an admin panel with analytics — all in one Next.js 16 (App Router) codebase.
 
 ## Features
 
 **Storefront**
-- Home page with hero, categories and featured products
-- Catalogue with search, category filter, price sort and pagination
-- Product detail pages with SEO metadata / Open Graph images
-- Persistent cart (works for guests, stored in the browser)
+- Editorial home page: auto-playing hero slider, trust/perks strip, category tiles, best sellers, brand story, new arrivals, customer reviews, newsletter signup
+- Catalogue with full-text search, category / on-sale / in-stock filters, 5 sort orders and pagination
+- Product pages: sale pricing (compare-at), stock badges, star ratings with distribution, customer reviews, related products, JSON-LD rich results
+- Slide-out cart drawer + full cart page with free-shipping progress bar
+- Discount codes (percent or fixed, min. order, usage cap, expiry), applied server-side and passed to Stripe
 - Stripe Checkout (cards, Apple Pay / Google Pay, shipping address collection)
-- Order confirmation page + confirmation email
+- Wishlist (heart on every product), toast notifications, responsive mobile menu and search overlay
+- FAQ page, sitemap.xml, robots.txt, error boundary, loading skeletons
 
 **Accounts**
 - Email/password registration and sign-in (Auth.js / NextAuth v5, bcrypt hashing)
-- Customer order history
+- Password reset by email (1-hour, single-use, hashed tokens)
+- Account area: order history with progress tracker, wishlist
 - Role-based access: `CUSTOMER` and `ADMIN`
 
 **Admin panel** (`/admin`)
-- Dashboard: revenue, paid orders, average order value, customers, 14-day revenue chart, top products, low-stock alerts
-- Products: create, edit, hide, delete (products with order history are archived, never lost)
+- Dashboard: revenue, paid orders, average order value, customers, subscribers, 14-day revenue chart, recent orders, top products, low-stock alerts
+- Products: create, edit, hide, delete, sale prices, featured flag (products with order history are archived, never lost)
 - Orders: filter by status, view shipping address, update status (emails the customer on ship/deliver)
-- Users: list, promote/demote admins
+- Discount codes: create, enable/disable, delete, usage tracking
+- Customers: list, promote/demote admins
 
 ## Tech stack
 
@@ -31,7 +35,7 @@ A production-ready e-commerce starter: storefront, cart, Stripe checkout, custom
 | Language | TypeScript (strict) |
 | Styling | Tailwind CSS v4 |
 | Database | PostgreSQL + Prisma ORM 6 |
-| Auth | Auth.js (NextAuth v5) â€” JWT sessions, credentials provider |
+| Auth | Auth.js (NextAuth v5) — JWT sessions, credentials provider |
 | Payments | Stripe Checkout + signed webhooks |
 | Email | Resend (falls back to console logging when not configured) |
 | Validation | Zod v4 on every API input |
@@ -71,7 +75,7 @@ Use test card `4242 4242 4242 4242`, any future expiry, any CVC.
 | `DIRECT_URL` | yes | direct connection for migrations (Neon host without `-pooler`) |
 | `AUTH_SECRET` | yes | `npx auth secret` |
 | `AUTH_TRUST_HOST` | off-Vercel | `true` for self-hosting / local prod builds |
-| `STRIPE_SECRET_KEY` | yes | `sk_test_â€¦` / `sk_live_â€¦` |
+| `STRIPE_SECRET_KEY` | yes | `sk_test_…` / `sk_live_…` |
 | `STRIPE_WEBHOOK_SECRET` | yes | from Stripe webhook endpoint or `stripe listen` |
 | `RESEND_API_KEY` | no | emails are logged to console when unset |
 | `EMAIL_FROM` | no | verified sender, e.g. `Store <orders@yourdomain.com>` |
@@ -83,10 +87,10 @@ Use test card `4242 4242 4242 4242`, any future expiry, any CVC.
 ## Deploying to Vercel
 
 1. Push the repo to GitHub and import it in Vercel.
-2. Create a Postgres database (Vercel Marketplace â†’ Neon, or Supabase) and set `DATABASE_URL`.
-3. Add all environment variables above in **Project â†’ Settings â†’ Environment Variables**.
+2. Create a Postgres database (Vercel Marketplace → Neon, or Supabase) and set `DATABASE_URL`.
+3. Add all environment variables above in **Project → Settings → Environment Variables**.
 4. Deploy. The `vercel-build` script runs `prisma migrate deploy` before `next build`, so schema changes ship automatically.
-5. In Stripe â†’ Developers â†’ Webhooks, add endpoint `https://<your-domain>/api/webhooks/stripe` with events `checkout.session.completed` and `checkout.session.expired`; put its signing secret in `STRIPE_WEBHOOK_SECRET` and redeploy.
+5. In Stripe → Developers → Webhooks, add endpoint `https://<your-domain>/api/webhooks/stripe` with events `checkout.session.completed` and `checkout.session.expired`; put its signing secret in `STRIPE_WEBHOOK_SECRET` and redeploy.
 6. Seed the first admin once: `DATABASE_URL=<prod url> npm run db:seed` (change the password afterwards).
 
 Every push to a branch gets a Vercel preview deployment; GitHub Actions (`.github/workflows/ci.yml`) runs lint, typecheck, migrations and a production build on each push/PR.

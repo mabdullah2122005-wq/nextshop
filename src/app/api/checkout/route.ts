@@ -4,9 +4,10 @@ import { prisma } from "@/lib/prisma";
 import { getStripe } from "@/lib/stripe";
 import { checkoutSchema } from "@/lib/validators";
 import { jsonError, zodError } from "@/lib/api";
+import { resolveCoupon } from "@/lib/coupons";
 
 // POST /api/checkout — creates a PENDING order and a Stripe Checkout Session.
-// Prices always come from the database, never from the client.
+// Prices and discounts always come from the database, never from the client.
 export async function POST(req: Request) {
   if (!process.env.STRIPE_SECRET_KEY) return jsonError("Online payments aren't enabled yet. Please check back soon.", 503);
 
@@ -25,7 +26,17 @@ export async function POST(req: Request) {
   }
 
   const lines = products.map((p) => ({ product: p, quantity: quantities.get(p.id)! }));
-  const totalCents = lines.reduce((sum, l) => sum + l.product.priceCents * l.quantity, 0);
+  const subtotalCents = lines.reduce((sum, l) => sum + l.product.priceCents * l.quantity, 0);
+
+  let discountCents = 0;
+  let couponCode: string | null = null;
+  if (parsed.data.couponCode) {
+    const result = await resolveCoupon(parsed.data.couponCode, subtotalCents);
+    if ("error" in result) return jsonError(result.error!, 422);
+    discountCents = result.discountCents;
+    couponCode = result.coupon.code;
+  }
+
   const origin = process.env.NEXT_PUBLIC_APP_URL ?? new URL(req.url).origin;
   const currency = (process.env.NEXT_PUBLIC_CURRENCY ?? "USD").toLowerCase();
 
@@ -33,7 +44,10 @@ export async function POST(req: Request) {
     data: {
       userId: session?.user?.id,
       email: session?.user?.email ?? "pending@checkout",
-      totalCents,
+      subtotalCents,
+      discountCents,
+      totalCents: subtotalCents - discountCents,
+      couponCode,
       items: {
         create: lines.map((l) => ({
           productId: l.product.id,
@@ -46,12 +60,19 @@ export async function POST(req: Request) {
   });
 
   try {
-    const checkout = await getStripe().checkout.sessions.create({
+    const stripe = getStripe();
+    // A one-off Stripe coupon mirrors our server-computed discount exactly.
+    const discounts = discountCents
+      ? [{ coupon: (await stripe.coupons.create({ amount_off: discountCents, currency, duration: "once", name: couponCode! })).id }]
+      : undefined;
+
+    const checkout = await stripe.checkout.sessions.create({
       mode: "payment",
       customer_email: session?.user?.email ?? undefined,
       client_reference_id: order.id,
       metadata: { orderId: order.id },
       shipping_address_collection: { allowed_countries: ["US", "CA", "GB", "AU", "DE", "FR"] },
+      discounts,
       line_items: lines.map((l) => ({
         quantity: l.quantity,
         price_data: {

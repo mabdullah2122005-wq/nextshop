@@ -6,7 +6,7 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider  = "postgresql"
   url       = env("DATABASE_URL") // pooled connection, used at runtime
   directUrl = env("DIRECT_URL")   // direct connection, used by migrations
 }
@@ -24,41 +24,95 @@ enum OrderStatus {
   CANCELLED
 }
 
+enum CouponKind {
+  PERCENT // value = percentage (1–100)
+  FIXED   // value = amount off in cents
+}
+
 model User {
-  id           String   @id @default(cuid())
+  id           String               @id @default(cuid())
   name         String?
-  email        String   @unique
+  email        String               @unique
   passwordHash String
-  role         Role     @default(CUSTOMER)
+  role         Role                 @default(CUSTOMER)
   orders       Order[]
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  reviews      Review[]
+  wishlist     WishlistItem[]
+  resetTokens  PasswordResetToken[]
+  createdAt    DateTime             @default(now())
+  updatedAt    DateTime             @updatedAt
 }
 
 model Category {
   id       String    @id @default(cuid())
   name     String    @unique
   slug     String    @unique
+  imageUrl String?
   products Product[]
 }
 
 model Product {
-  id          String      @id @default(cuid())
-  name        String
-  slug        String      @unique
-  description String
-  priceCents  Int
-  imageUrl    String
-  stock       Int         @default(0)
-  active      Boolean     @default(true)
-  featured    Boolean     @default(false)
-  categoryId  String?
-  category    Category?   @relation(fields: [categoryId], references: [id], onDelete: SetNull)
-  orderItems  OrderItem[]
-  createdAt   DateTime    @default(now())
-  updatedAt   DateTime    @updatedAt
+  id             String         @id @default(cuid())
+  name           String
+  slug           String         @unique
+  description    String
+  priceCents     Int
+  compareAtCents Int? // original price, shown struck-through when higher than priceCents
+  imageUrl       String
+  stock          Int            @default(0)
+  active         Boolean        @default(true)
+  featured       Boolean        @default(false)
+  // Denormalised from reviews so listings can sort/show ratings without aggregating.
+  ratingAvg      Float          @default(0)
+  ratingCount    Int            @default(0)
+  categoryId     String?
+  category       Category?      @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  orderItems     OrderItem[]
+  reviews        Review[]
+  wishlistedBy   WishlistItem[]
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
 
   @@index([active, categoryId])
+}
+
+model Review {
+  id        String   @id @default(cuid())
+  productId String
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  rating    Int // 1–5
+  title     String?
+  body      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, productId]) // one review per customer per product (editable)
+  @@index([productId, createdAt])
+}
+
+model WishlistItem {
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  productId String
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@id([userId, productId])
+}
+
+model Coupon {
+  id            String     @id @default(cuid())
+  code          String     @unique // stored upper-case
+  kind          CouponKind
+  value         Int
+  minOrderCents Int        @default(0)
+  maxUses       Int?
+  usedCount     Int        @default(0)
+  expiresAt     DateTime?
+  active        Boolean    @default(true)
+  createdAt     DateTime   @default(now())
 }
 
 model Order {
@@ -67,7 +121,10 @@ model Order {
   user            User?       @relation(fields: [userId], references: [id], onDelete: SetNull)
   email           String
   status          OrderStatus @default(PENDING)
+  subtotalCents   Int         @default(0)
+  discountCents   Int         @default(0)
   totalCents      Int
+  couponCode      String?
   stripeSessionId String?     @unique
   shippingName    String?
   shippingAddress Json?
@@ -88,4 +145,20 @@ model OrderItem {
   name       String
   priceCents Int
   quantity   Int
+}
+
+model PasswordResetToken {
+  id        String    @id @default(cuid())
+  userId    String
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tokenHash String    @unique // sha-256 of the emailed token; the raw token is never stored
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime  @default(now())
+}
+
+model NewsletterSubscriber {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  createdAt DateTime @default(now())
 }

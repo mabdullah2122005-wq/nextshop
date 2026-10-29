@@ -15,8 +15,9 @@ export default async function SuccessPage({ searchParams }: PageProps<"/checkout
   return (
     <div className="container-page max-w-xl py-20 text-center">
       <ClearCart />
-      <h1 className="text-3xl font-semibold">Thank you!</h1>
-      <p className="mt-3 text-stone-600">
+      <div className="mx-auto grid h-16 w-16 place-items-center rounded-full bg-brand text-3xl text-white">✓</div>
+      <h1 className="heading mt-6 text-5xl">Thank you!</h1>
+      <p className="mt-3 text-ink/60">
         Your payment was received. A confirmation email is on its way.
       </p>
       {order && (
@@ -30,7 +31,13 @@ export default async function SuccessPage({ searchParams }: PageProps<"/checkout
               </li>
             ))}
           </ul>
-          <p className="mt-3 flex justify-between border-t border-stone-200 pt-3 font-semibold">
+          {order.discountCents > 0 && (
+            <p className="mt-2 flex justify-between text-sm text-brand">
+              <span>Discount ({order.couponCode})</span>
+              <span>−{formatPrice(order.discountCents)}</span>
+            </p>
+          )}
+          <p className="mt-3 flex justify-between border-t border-ink/8 pt-3 font-semibold">
             <span>Total</span>
             <span>{formatPrice(order.totalCents)}</span>
           </p>

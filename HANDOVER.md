@@ -67,7 +67,15 @@ src/
 | GET/POST | `/api/auth/*` | — | Auth.js (sign-in, session, csrf) |
 | POST | `/api/checkout` | public / customer | create order + Stripe session → `{url}` |
 | POST | `/api/webhooks/stripe` | Stripe signature | payment events |
+| POST | `/api/coupons` | public | preview a discount code `{code, subtotalCents}` |
+| GET/POST | `/api/products/:slug/reviews` | public / customer | list / create-or-update own review |
+| GET/POST | `/api/wishlist` | customer | list ids / toggle `{productId}` |
+| POST | `/api/newsletter` | public | subscribe `{email}` |
+| POST | `/api/auth/forgot` | public | email a reset link `{email}` |
+| POST | `/api/auth/reset` | public | set password `{token, password}` |
 | GET | `/api/admin/stats` | admin | dashboard metrics |
+| GET/POST | `/api/admin/coupons` | admin | list / create discount codes |
+| PATCH/DELETE | `/api/admin/coupons/:id` | admin | enable-disable / delete |
 | GET/POST | `/api/admin/products` | admin | list / create |
 | PATCH/DELETE | `/api/admin/products/:id` | admin | update / delete-or-archive |
 | GET | `/api/admin/orders?status=` | admin | list orders |
@@ -96,14 +104,20 @@ Errors are always `{ "error": "message" }` with 401/403/404/409/422/502 status c
 
 ## 7. Verified
 
-An end-to-end test was run against a real PostgreSQL database and production build, with 38 of 38 checks passing. It covered the catalogue, search and filter, registration and login, role protection (401/403/redirects), checkout validation and server pricing, a signed Stripe webhook (paid status, address, stock decrement, idempotency), order history, and admin CRUD for products, orders and users.
+An end-to-end test was run against a real PostgreSQL database and a production build. All 70 checks passed. It covered:
+- the catalogue, search and filters (including sale)
+- registration, login and password reset (including single-use tokens)
+- role protection (401/403/redirects)
+- checkout validation, server-side pricing and discount codes
+- a signed Stripe webhook: paid status, address, stock decrement, coupon usage, idempotency
+- reviews and rating recalculation, the wishlist, and the newsletter
+- order history
+- admin CRUD for products, orders, users and discount codes
 
 ## 8. Suggested next steps
 
 - Product image upload (Vercel Blob or Cloudinary) instead of URLs
 - Multiple images and variants (size/colour) per product
-- Discount codes (Stripe Promotion Codes are one flag away: `allow_promotion_codes: true`)
 - Shipping rates via Stripe `shipping_options` or a carrier API (Shippo/EasyPost)
-- Password reset email flow
 - Rate limiting on `/api/register` and sign-in (e.g. Upstash)
 - Vercel Analytics / GA4

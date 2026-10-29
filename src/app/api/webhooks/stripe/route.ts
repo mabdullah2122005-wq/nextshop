@@ -55,6 +55,9 @@ async function handleCompleted(s: Stripe.Checkout.Session) {
         await tx.product.update({ where: { id: item.productId }, data: { stock: { decrement: item.quantity } } });
       }
     }
+    if (o.couponCode) {
+      await tx.coupon.updateMany({ where: { code: o.couponCode }, data: { usedCount: { increment: 1 } } });
+    }
     return o;
   });
 

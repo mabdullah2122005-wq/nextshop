@@ -10,6 +10,7 @@ type Initial = {
   slug: string;
   description: string;
   priceCents: number;
+  compareAtCents: number | null;
   imageUrl: string;
   stock: number;
   active: boolean;
@@ -17,7 +18,7 @@ type Initial = {
   categoryId: string | null;
 };
 
-const empty: Initial = { name: "", slug: "", description: "", priceCents: 0, imageUrl: "", stock: 0, active: true, featured: false, categoryId: null };
+const empty: Initial = { name: "", slug: "", description: "", priceCents: 0, compareAtCents: null, imageUrl: "", stock: 0, active: true, featured: false, categoryId: null };
 
 export function ProductForm({ categories, initial = empty }: { categories: Category[]; initial?: Initial }) {
   const router = useRouter();
@@ -35,6 +36,7 @@ export function ProductForm({ categories, initial = empty }: { categories: Categ
       slug: f.get("slug"),
       description: f.get("description"),
       priceCents: Math.round(Number(f.get("price")) * 100),
+      compareAtCents: f.get("compareAt") ? Math.round(Number(f.get("compareAt")) * 100) : null,
       imageUrl: f.get("imageUrl"),
       stock: Number(f.get("stock")),
       active: f.get("active") === "on",
@@ -78,11 +80,17 @@ export function ProductForm({ categories, initial = empty }: { categories: Categ
         <label className="label" htmlFor="description">Description</label>
         <textarea id="description" name="description" defaultValue={initial.description} required rows={5} className="input" />
       </div>
-      <div className="grid gap-4 sm:grid-cols-3">
+      <div className="grid gap-4 sm:grid-cols-2">
         <div>
           <label className="label" htmlFor="price">Price</label>
           <input id="price" name="price" type="number" step="0.01" min="0.5" defaultValue={initial.priceCents ? initial.priceCents / 100 : ""} required className="input" />
         </div>
+        <div>
+          <label className="label" htmlFor="compareAt">Compare-at price <span className="font-normal text-ink/40">(optional, shows as sale)</span></label>
+          <input id="compareAt" name="compareAt" type="number" step="0.01" min="0" defaultValue={initial.compareAtCents ? initial.compareAtCents / 100 : ""} className="input" />
+        </div>
+      </div>
+      <div className="grid gap-4 sm:grid-cols-2">
         <div>
           <label className="label" htmlFor="stock">Stock</label>
           <input id="stock" name="stock" type="number" min="0" defaultValue={initial.stock} required className="input" />

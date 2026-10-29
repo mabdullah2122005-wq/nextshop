@@ -39,7 +39,10 @@ export function LoginForm() {
         <input id="email" name="email" type="email" required autoComplete="email" className="input" />
       </div>
       <div>
-        <label htmlFor="password" className="label">Password</label>
+        <div className="flex items-center justify-between">
+          <label htmlFor="password" className="label">Password</label>
+          <Link href="/forgot" className="mb-1.5 text-xs text-ink/60 hover:text-brand">Forgot password?</Link>
+        </div>
         <input id="password" name="password" type="password" required autoComplete="current-password" className="input" />
       </div>
       {error && <p className="rounded bg-red-50 p-2 text-sm text-red-700">{error}</p>}

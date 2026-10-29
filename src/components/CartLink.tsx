@@ -1,18 +1,18 @@
 "use client";
 
-import Link from "next/link";
 import { useCart } from "./CartProvider";
+import { BagIcon } from "./icons";
 
 export function CartLink() {
-  const { count } = useCart();
+  const { count, openCart } = useCart();
   return (
-    <Link href="/cart" className="relative rounded-lg bg-brand px-3 py-1.5 text-white hover:bg-brand-dark" aria-label={`Cart, ${count} items`}>
-      Cart
+    <button onClick={openCart} className="relative rounded-full p-2 hover:bg-cream" aria-label={`Open cart, ${count} items`}>
+      <BagIcon className="h-6 w-6" />
       {count > 0 && (
-        <span className="absolute -top-2 -right-2 grid h-5 min-w-5 place-items-center rounded-full bg-accent px-1 text-xs font-semibold">
+        <span className="absolute top-0 right-0 grid h-5 min-w-5 place-items-center rounded-full bg-accent px-1 text-[11px] font-semibold text-white">
           {count}
         </span>
       )}
-    </Link>
+    </button>
   );
 }
