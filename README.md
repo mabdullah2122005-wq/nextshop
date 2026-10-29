@@ -67,7 +67,8 @@ Use test card `4242 4242 4242 4242`, any future expiry, any CVC.
 
 | Variable | Required | Notes |
 | --- | --- | --- |
-| `DATABASE_URL` | yes | PostgreSQL connection string |
+| `DATABASE_URL` | yes | PostgreSQL connection string (pooled on Neon) |
+| `DIRECT_URL` | yes | direct connection for migrations (Neon host without `-pooler`) |
 | `AUTH_SECRET` | yes | `npx auth secret` |
 | `AUTH_TRUST_HOST` | off-Vercel | `true` for self-hosting / local prod builds |
 | `STRIPE_SECRET_KEY` | yes | `sk_test_…` / `sk_live_…` |

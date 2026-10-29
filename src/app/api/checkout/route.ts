@@ -8,6 +8,8 @@ import { jsonError, zodError } from "@/lib/api";
 // POST /api/checkout — creates a PENDING order and a Stripe Checkout Session.
 // Prices always come from the database, never from the client.
 export async function POST(req: Request) {
+  if (!process.env.STRIPE_SECRET_KEY) return jsonError("Online payments aren't enabled yet. Please check back soon.", 503);
+
   const parsed = checkoutSchema.safeParse(await req.json().catch(() => null));
   if (!parsed.success) return zodError(parsed.error);
 

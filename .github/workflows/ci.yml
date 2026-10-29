@@ -20,6 +20,7 @@ jobs:
           --health-cmd pg_isready --health-interval 5s --health-timeout 5s --health-retries 10
     env:
       DATABASE_URL: postgresql://postgres:postgres@localhost:5432/nextshop?schema=public
+      DIRECT_URL: postgresql://postgres:postgres@localhost:5432/nextshop?schema=public
       AUTH_SECRET: ci-only-secret-not-used-in-production
       STRIPE_SECRET_KEY: sk_test_dummy
       STRIPE_WEBHOOK_SECRET: whsec_dummy
