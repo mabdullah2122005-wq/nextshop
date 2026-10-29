@@ -1,6 +1,6 @@
-# NextShop — Full-stack e-commerce on Next.js
+﻿# NextShop â€” Full-stack e-commerce on Next.js
 
-A production-ready e-commerce starter: storefront, cart, Stripe checkout, customer accounts, and an admin panel with analytics — all in one Next.js 16 (App Router) codebase.
+A production-ready e-commerce starter: storefront, cart, Stripe checkout, customer accounts, and an admin panel with analytics â€” all in one Next.js 16 (App Router) codebase.
 
 ## Features
 
@@ -31,7 +31,7 @@ A production-ready e-commerce starter: storefront, cart, Stripe checkout, custom
 | Language | TypeScript (strict) |
 | Styling | Tailwind CSS v4 |
 | Database | PostgreSQL + Prisma ORM 6 |
-| Auth | Auth.js (NextAuth v5) — JWT sessions, credentials provider |
+| Auth | Auth.js (NextAuth v5) â€” JWT sessions, credentials provider |
 | Payments | Stripe Checkout + signed webhooks |
 | Email | Resend (falls back to console logging when not configured) |
 | Validation | Zod v4 on every API input |
@@ -71,7 +71,7 @@ Use test card `4242 4242 4242 4242`, any future expiry, any CVC.
 | `DIRECT_URL` | yes | direct connection for migrations (Neon host without `-pooler`) |
 | `AUTH_SECRET` | yes | `npx auth secret` |
 | `AUTH_TRUST_HOST` | off-Vercel | `true` for self-hosting / local prod builds |
-| `STRIPE_SECRET_KEY` | yes | `sk_test_…` / `sk_live_…` |
+| `STRIPE_SECRET_KEY` | yes | `sk_test_â€¦` / `sk_live_â€¦` |
 | `STRIPE_WEBHOOK_SECRET` | yes | from Stripe webhook endpoint or `stripe listen` |
 | `RESEND_API_KEY` | no | emails are logged to console when unset |
 | `EMAIL_FROM` | no | verified sender, e.g. `Store <orders@yourdomain.com>` |
@@ -83,10 +83,10 @@ Use test card `4242 4242 4242 4242`, any future expiry, any CVC.
 ## Deploying to Vercel
 
 1. Push the repo to GitHub and import it in Vercel.
-2. Create a Postgres database (Vercel Marketplace → Neon, or Supabase) and set `DATABASE_URL`.
-3. Add all environment variables above in **Project → Settings → Environment Variables**.
+2. Create a Postgres database (Vercel Marketplace â†’ Neon, or Supabase) and set `DATABASE_URL`.
+3. Add all environment variables above in **Project â†’ Settings â†’ Environment Variables**.
 4. Deploy. The `vercel-build` script runs `prisma migrate deploy` before `next build`, so schema changes ship automatically.
-5. In Stripe → Developers → Webhooks, add endpoint `https://<your-domain>/api/webhooks/stripe` with events `checkout.session.completed` and `checkout.session.expired`; put its signing secret in `STRIPE_WEBHOOK_SECRET` and redeploy.
+5. In Stripe â†’ Developers â†’ Webhooks, add endpoint `https://<your-domain>/api/webhooks/stripe` with events `checkout.session.completed` and `checkout.session.expired`; put its signing secret in `STRIPE_WEBHOOK_SECRET` and redeploy.
 6. Seed the first admin once: `DATABASE_URL=<prod url> npm run db:seed` (change the password afterwards).
 
 Every push to a branch gets a Vercel preview deployment; GitHub Actions (`.github/workflows/ci.yml`) runs lint, typecheck, migrations and a production build on each push/PR.
@@ -101,5 +101,7 @@ Every push to a branch gets a Vercel preview deployment; GitHub Actions (`.githu
 | `npm run db:migrate` | Create a new migration after editing `schema.prisma` |
 | `npm run db:seed` | Seed demo data + admin |
 | `npm run db:studio` | Prisma Studio DB browser |
+
+**Store owners:** see [GO-LIVE-GUIDE.md](GO-LIVE-GUIDE.md) to enable Stripe, connect a domain and manage the store.
 
 See [HANDOVER.md](HANDOVER.md) for architecture, API reference and maintenance notes.
