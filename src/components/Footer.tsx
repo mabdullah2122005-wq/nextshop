@@ -11,8 +11,8 @@ export function Footer() {
 
   return (
     <footer className="mt-24 bg-brand text-white">
-      <div className="container-page grid gap-12 py-16 lg:grid-cols-[1.4fr_repeat(3,1fr)]">
-        <div>
+      <div className="container-page grid grid-cols-2 gap-x-6 gap-y-10 py-14 sm:grid-cols-3 lg:grid-cols-[1.4fr_repeat(3,1fr)] lg:gap-12 lg:py-16">
+        <div className="col-span-2 sm:col-span-3 lg:col-span-1">
           <p className="heading text-3xl">{storeName}</p>
           <p className="mt-3 max-w-sm text-sm leading-relaxed text-white/70">
             Well-made essentials for everyday life. Join our list for new arrivals and members-only offers.
@@ -22,9 +22,9 @@ export function Footer() {
         {cols.map((c) => (
           <div key={c.title}>
             <p className="text-xs font-semibold tracking-[0.2em] text-white/50 uppercase">{c.title}</p>
-            <ul className="mt-4 space-y-2.5 text-sm text-white/80">
+            <ul className="mt-3 text-sm text-white/80">
               {c.links.map(([label, href]) => (
-                <li key={href}><Link href={href} className="hover:text-white">{label}</Link></li>
+                <li key={href}><Link href={href} className="block py-1.5 hover:text-white">{label}</Link></li>
               ))}
             </ul>
           </div>
@@ -33,7 +33,7 @@ export function Footer() {
       <div className="border-t border-white/10">
         <div className="container-page flex flex-col gap-2 py-6 text-xs text-white/50 sm:flex-row sm:justify-between">
           <p>© {new Date().getFullYear()} {storeName}. All rights reserved.</p>
-          <p>Secure payments by Stripe · Visa · Mastercard · Amex · Apple Pay · Google Pay</p>
+          <p>Secure payments by Stripe · Cards · Apple Pay · Google Pay</p>
         </div>
       </div>
     </footer>

@@ -2,11 +2,13 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { useToast } from "@/components/ToastProvider";
 
 const STATUSES = ["PENDING", "PAID", "SHIPPED", "DELIVERED", "CANCELLED"];
 
-export function OrderStatusSelect({ id, status }: { id: string; status: string }) {
+export function OrderStatusSelect({ id, status, full = false }: { id: string; status: string; full?: boolean }) {
   const router = useRouter();
+  const toast = useToast();
   const [value, setValue] = useState(status);
   const [saving, setSaving] = useState(false);
 
@@ -22,15 +24,19 @@ export function OrderStatusSelect({ id, status }: { id: string; status: string }
     setSaving(false);
     if (!res.ok) {
       setValue(prev);
-      alert("Could not update order status");
+      toast("Could not update order status", "error");
       return;
     }
+    toast(`Order marked ${next.toLowerCase()}`);
     router.refresh();
   }
 
   return (
-    <select value={value} disabled={saving} onChange={(e) => change(e.target.value)} className="input w-36 py-1" aria-label="Order status">
-      {STATUSES.map((s) => <option key={s} value={s}>{s}</option>)}
-    </select>
+    <label className={`flex items-center gap-2 ${full ? "w-full" : ""}`}>
+      <span className={full ? "text-sm text-ink/60" : "sr-only"}>Status</span>
+      <select value={value} disabled={saving} onChange={(e) => change(e.target.value)} className={`input py-2 ${full ? "flex-1" : "w-36"}`} aria-label="Order status">
+        {STATUSES.map((s) => <option key={s} value={s}>{s}</option>)}
+      </select>
+    </label>
   );
 }

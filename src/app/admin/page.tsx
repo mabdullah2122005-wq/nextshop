@@ -21,7 +21,7 @@ export default async function AdminDashboard() {
     <div className="space-y-6">
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h1 className="heading text-4xl">Dashboard</h1>
+          <h1 className="heading text-3xl sm:text-4xl">Dashboard</h1>
           <p className="mt-1 text-ink/60">Here’s how your store is doing.</p>
         </div>
         <Link href="/admin/products/new" className="btn">+ Add product</Link>
@@ -34,22 +34,22 @@ export default async function AdminDashboard() {
         </Link>
       )}
 
-      <div className="grid grid-cols-2 gap-4 xl:grid-cols-4">
+      <div className="grid grid-cols-2 gap-3 sm:gap-4 xl:grid-cols-4">
         {tiles.map((t) => (
-          <div key={t.label} className="card p-5">
+          <div key={t.label} className="card min-w-0 p-4 sm:p-5">
             <p className="text-sm text-ink/55">{t.label}</p>
-            <p className="heading mt-2 text-3xl">{t.value}</p>
+            <p className="heading mt-2 truncate text-2xl sm:text-3xl">{t.value}</p>
             <p className="mt-1 text-xs text-ink/45">{t.sub}</p>
           </div>
         ))}
       </div>
 
-      <div className="card p-6">
+      <div className="card min-w-0 p-4 sm:p-6">
         <div className="flex items-baseline justify-between">
           <h2 className="font-semibold">Revenue · last 14 days</h2>
           <span className="text-sm text-ink/50">{formatPrice(last14)}</span>
         </div>
-        <div className="mt-8 flex h-56 items-end gap-1.5" role="img" aria-label="Daily revenue bar chart">
+        <div className="mt-8 flex h-44 items-end gap-1 sm:h-56 sm:gap-1.5" role="img" aria-label="Daily revenue bar chart">
           {stats.daily.map((d) => (
             <div key={d.date} className="group relative flex h-full flex-1 flex-col justify-end">
               <div className="rounded-t-md bg-brand/75 transition group-hover:bg-brand" style={{ height: `${Math.max(2, (d.revenueCents / max) * 100)}%` }} />
@@ -65,8 +65,8 @@ export default async function AdminDashboard() {
         </div>
       </div>
 
-      <div className="grid gap-4 xl:grid-cols-[1.4fr_1fr]">
-        <div className="card p-6">
+      <div className="grid grid-cols-1 gap-4 xl:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)]">
+        <div className="card min-w-0 p-4 sm:p-6">
           <div className="flex items-center justify-between">
             <h2 className="font-semibold">Recent orders</h2>
             <Link href="/admin/orders" className="text-sm text-brand hover:underline">View all</Link>
@@ -79,16 +79,16 @@ export default async function AdminDashboard() {
                 <li key={o.id} className="flex items-center justify-between gap-3 py-3">
                   <div className="min-w-0">
                     <p className="font-medium">{shortId(o.id)}</p>
-                    <p className="truncate text-ink/50">{o.email} · {formatDate(o.createdAt)}</p>
+                    <p className="truncate text-ink/50">{o.email === "pending@checkout" ? "Guest" : o.email} · {formatDate(o.createdAt)}</p>
                   </div>
-                  <div className="flex items-center gap-3"><StatusBadge status={o.status} /><span className="font-medium">{formatPrice(o.totalCents)}</span></div>
+                  <div className="flex shrink-0 flex-col items-end gap-1 sm:flex-row sm:items-center sm:gap-3"><StatusBadge status={o.status} /><span className="font-medium">{formatPrice(o.totalCents)}</span></div>
                 </li>
               ))}
             </ul>
           )}
         </div>
         <div className="space-y-4">
-          <div className="card p-6">
+          <div className="card min-w-0 p-4 sm:p-6">
             <h2 className="font-semibold">Top products</h2>
             {stats.topProducts.length === 0 ? (
               <p className="mt-3 text-sm text-ink/50">No sales yet.</p>
@@ -104,7 +104,7 @@ export default async function AdminDashboard() {
               </ol>
             )}
           </div>
-          <div className="card p-6">
+          <div className="card min-w-0 p-4 sm:p-6">
             <h2 className="font-semibold">Low stock</h2>
             {stats.lowStock.length === 0 ? (
               <p className="mt-3 text-sm text-ink/50">All products are well stocked. ✓</p>

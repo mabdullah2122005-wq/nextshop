@@ -44,11 +44,11 @@ export function RegisterForm() {
       <div>
         <label htmlFor="password" className="label">Password</label>
         <input id="password" name="password" type="password" required minLength={8} autoComplete="new-password" className="input" />
-        <p className="mt-1 text-xs text-stone-500">At least 8 characters.</p>
+        <p className="mt-1 text-xs text-ink/50">At least 8 characters.</p>
       </div>
       {error && <p className="rounded bg-red-50 p-2 text-sm text-red-700">{error}</p>}
       <button disabled={loading} className="btn w-full">{loading ? "Creating…" : "Create account"}</button>
-      <p className="text-center text-sm text-stone-600">
+      <p className="text-center text-sm text-ink/60">
         Have an account? <Link href="/login" className="text-brand hover:underline">Sign in</Link>
       </p>
     </form>

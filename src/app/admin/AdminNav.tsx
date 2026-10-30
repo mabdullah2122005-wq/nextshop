@@ -15,7 +15,7 @@ const nav = [
 export function AdminNav() {
   const path = usePathname();
   return (
-    <nav className="flex gap-1 overflow-x-auto lg:flex-col">
+    <nav className="-mx-4 flex gap-1 overflow-x-auto px-4 pb-1 [scrollbar-width:none] sm:mx-0 sm:px-0 lg:flex-col" aria-label="Admin">
       {nav.map((n) => {
         const active = n.href === "/admin" ? path === "/admin" : path.startsWith(n.href);
         return (

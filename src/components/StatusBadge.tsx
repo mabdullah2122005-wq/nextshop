@@ -1,5 +1,5 @@
 const styles: Record<string, string> = {
-  PENDING: "bg-stone-100 text-stone-700",
+  PENDING: "bg-cream text-ink/70",
   PAID: "bg-blue-50 text-blue-700",
   SHIPPED: "bg-amber-50 text-amber-800",
   DELIVERED: "bg-green-50 text-green-700",

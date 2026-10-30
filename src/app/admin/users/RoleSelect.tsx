@@ -23,7 +23,7 @@ export function RoleSelect({ id, role }: { id: string; role: string }) {
   }
 
   return (
-    <select value={value} onChange={(e) => change(e.target.value)} className="input w-32 py-1" aria-label="User role">
+    <select value={value} onChange={(e) => change(e.target.value)} className="input w-32 py-2" aria-label="User role">
       <option value="CUSTOMER">CUSTOMER</option>
       <option value="ADMIN">ADMIN</option>
     </select>

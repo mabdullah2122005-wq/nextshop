@@ -14,7 +14,7 @@ export default async function EditProductPage({ params }: PageProps<"/admin/prod
 
   return (
     <div>
-      <h1 className="mb-6 text-2xl font-semibold">Edit product</h1>
+      <h1 className="heading mb-6 text-3xl sm:text-4xl">Edit product</h1>
       <ProductForm categories={categories} initial={product} />
     </div>
   );

@@ -6,12 +6,13 @@ import { cache } from "react";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { getWishlistIds } from "@/lib/wishlist";
-import { formatDate, formatPrice } from "@/lib/format";
+import { formatDate, formatPrice, formatPriceShort } from "@/lib/format";
 import { FREE_SHIPPING_CENTS } from "@/lib/shipping";
 import { AddToCartButton } from "@/components/AddToCartButton";
 import { ProductCard } from "@/components/ProductCard";
 import { StarRating } from "@/components/StarRating";
 import { WishlistButton } from "@/components/WishlistButton";
+import { StickyBuyBar } from "@/components/StickyBuyBar";
 import { ReturnIcon, ShieldIcon, TruckIcon } from "@/components/icons";
 import { ReviewForm } from "./ReviewForm";
 
@@ -43,6 +44,7 @@ export default async function ProductPage({ params }: PageProps<"/products/[slug
   ]);
 
   const onSale = product.compareAtCents && product.compareAtCents > product.priceCents;
+  const cartProduct = { productId: product.id, slug: product.slug, name: product.name, priceCents: product.priceCents, imageUrl: product.imageUrl };
   const distribution = [5, 4, 3, 2, 1].map((star) => ({ star, count: reviews.filter((r) => r.rating === star).length }));
 
   // Structured data for Google rich results (price, stock, rating).
@@ -62,14 +64,14 @@ export default async function ProductPage({ params }: PageProps<"/products/[slug
   };
 
   return (
-    <div className="container-page py-10">
+    <div className="container-page py-6 sm:py-10">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c") }} />
-      <nav className="mb-8 text-sm text-ink/50">
+      <nav className="mb-5 text-sm text-ink/50 sm:mb-8">
         <Link href="/" className="hover:text-ink">Home</Link> / <Link href="/products" className="hover:text-ink">Shop</Link>
         {product.category && <> / <Link href={`/products?category=${product.category.slug}`} className="hover:text-ink">{product.category.name}</Link></>}
       </nav>
 
-      <div className="grid gap-10 lg:grid-cols-2 lg:gap-16">
+      <div className="grid grid-cols-1 gap-8 lg:grid-cols-2 lg:gap-16">
         <div className="relative aspect-[4/5] overflow-hidden rounded-3xl bg-sand lg:sticky lg:top-28 lg:self-start">
           <Image src={product.imageUrl} alt={product.name} fill priority sizes="(min-width: 1024px) 50vw, 100vw" className="object-cover" />
           {onSale && <span className="absolute top-5 left-5 rounded-full bg-accent px-3 py-1.5 text-xs font-semibold text-white">Sale</span>}
@@ -77,7 +79,7 @@ export default async function ProductPage({ params }: PageProps<"/products/[slug
 
         <div className="lg:py-4">
           {product.category && <p className="eyebrow">{product.category.name}</p>}
-          <h1 className="heading mt-3 text-4xl leading-tight sm:text-5xl">{product.name}</h1>
+          <h1 className="heading mt-2 text-[34px] leading-tight sm:mt-3 sm:text-5xl">{product.name}</h1>
           {product.ratingCount > 0 && (
             <a href="#reviews" className="mt-4 inline-flex items-center gap-2 text-sm hover:underline">
               <StarRating value={product.ratingAvg} /> {product.ratingAvg.toFixed(1)} · {product.ratingCount} review{product.ratingCount === 1 ? "" : "s"}
@@ -99,24 +101,22 @@ export default async function ProductPage({ params }: PageProps<"/products/[slug
             {product.stock === 0 ? "Out of stock" : product.stock <= 5 ? `Low stock — only ${product.stock} left` : "In stock, ready to ship"}
           </p>
 
-          <div className="mt-6 space-y-3">
-            <AddToCartButton
-              stock={product.stock}
-              product={{ productId: product.id, slug: product.slug, name: product.name, priceCents: product.priceCents, imageUrl: product.imageUrl }}
-            />
+          <div id="buy-box" className="mt-6 space-y-3">
+            <AddToCartButton stock={product.stock} product={cartProduct} />
             <WishlistButton productId={product.id} initial={wished.has(product.id)} variant="button" />
           </div>
+          <StickyBuyBar product={cartProduct} stock={product.stock} targetId="buy-box" />
 
           <ul className="mt-10 divide-y divide-ink/8 rounded-2xl border border-ink/8 bg-white text-sm">
-            <li className="flex gap-3 p-4"><TruckIcon className="h-5 w-5 text-brand" /> Free shipping on orders over {formatPrice(FREE_SHIPPING_CENTS)}</li>
+            <li className="flex gap-3 p-4"><TruckIcon className="h-5 w-5 text-brand" /> Free shipping on orders over {formatPriceShort(FREE_SHIPPING_CENTS)}</li>
             <li className="flex gap-3 p-4"><ReturnIcon className="h-5 w-5 text-brand" /> Free 30-day returns</li>
             <li className="flex gap-3 p-4"><ShieldIcon className="h-5 w-5 text-brand" /> Secure checkout with Stripe</li>
           </ul>
         </div>
       </div>
 
-      <section id="reviews" className="mt-24 scroll-mt-28 border-t border-ink/8 pt-16">
-        <div className="grid gap-12 lg:grid-cols-[320px_1fr]">
+      <section id="reviews" className="mt-16 scroll-mt-24 border-t border-ink/8 pt-12 sm:mt-24 sm:pt-16">
+        <div className="grid grid-cols-1 gap-10 lg:grid-cols-[320px_minmax(0,1fr)] lg:gap-12">
           <div>
             <h2 className="heading text-3xl">Customer reviews</h2>
             {product.ratingCount > 0 ? (
@@ -165,9 +165,9 @@ export default async function ProductPage({ params }: PageProps<"/products/[slug
       </section>
 
       {related.length > 0 && (
-        <section className="mt-24">
-          <h2 className="heading mb-8 text-3xl">You may also like</h2>
-          <div className="grid grid-cols-2 gap-x-4 gap-y-10 lg:grid-cols-4">
+        <section className="mt-16 sm:mt-24">
+          <h2 className="heading mb-6 text-3xl sm:mb-8">You may also like</h2>
+          <div className="grid grid-cols-2 gap-x-3 gap-y-8 sm:gap-x-4 sm:gap-y-10 lg:grid-cols-4">
             {related.map((p) => <ProductCard key={p.id} product={p} wished={wished.has(p.id)} />)}
           </div>
         </section>

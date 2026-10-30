@@ -58,50 +58,72 @@ export default async function ProductsPage({ searchParams }: PageProps<"/product
   };
 
   const title = q ? `Results for “${q}”` : sale ? "Sale" : activeCategory?.name ?? "Shop all";
+  const activeFilters = (sale ? 1 : 0) + (inStock ? 1 : 0) + (sort !== "featured" ? 1 : 0);
+
+  const filterLinks = (
+    <>
+      <div>
+        <p className="mb-2 text-xs font-semibold tracking-[0.15em] text-ink/50 uppercase">Filter</p>
+        <div className="flex flex-col gap-1">
+          <Link href={href({ sale: sale ? "" : "1", page: "" })} className={`flex items-center gap-3 rounded-lg px-3 py-2.5 ${sale ? "font-medium text-accent" : "hover:bg-sand"}`}>
+            <span className={`grid h-5 w-5 place-items-center rounded border text-xs ${sale ? "border-accent bg-accent text-white" : "border-ink/30 bg-white"}`}>{sale && "✓"}</span> On sale
+          </Link>
+          <Link href={href({ stock: inStock ? "" : "1", page: "" })} className={`flex items-center gap-3 rounded-lg px-3 py-2.5 ${inStock ? "font-medium text-brand" : "hover:bg-sand"}`}>
+            <span className={`grid h-5 w-5 place-items-center rounded border text-xs ${inStock ? "border-brand bg-brand text-white" : "border-ink/30 bg-white"}`}>{inStock && "✓"}</span> In stock only
+          </Link>
+        </div>
+      </div>
+      <div>
+        <p className="mb-2 text-xs font-semibold tracking-[0.15em] text-ink/50 uppercase">Sort by</p>
+        <div className="flex flex-col gap-1">
+          {SORTS.map(([value, label]) => (
+            <Link key={value} href={href({ sort: value === "featured" ? "" : value, page: "" })} className={`flex items-center justify-between rounded-lg px-3 py-2.5 ${sort === value ? "bg-sand font-medium" : "hover:bg-sand"}`}>
+              {label} {sort === value && <span aria-hidden>✓</span>}
+            </Link>
+          ))}
+        </div>
+      </div>
+    </>
+  );
+
+  const categoryLinks = [{ slug: "", name: "All" }, ...categories].map((c) => (
+    <Link
+      key={c.slug || "all"}
+      href={href({ category: c.slug, page: "" })}
+      aria-current={category === c.slug ? "page" : undefined}
+      className={`shrink-0 rounded-full px-4 py-2 text-sm whitespace-nowrap lg:rounded-lg lg:px-3 ${category === c.slug ? "bg-ink text-white" : "bg-white hover:bg-sand lg:bg-transparent"}`}
+    >
+      {c.name}
+    </Link>
+  ));
 
   return (
-    <div className="container-page py-12">
-      <div className="mb-10 border-b border-ink/8 pb-8">
-        <nav className="mb-3 text-sm text-ink/50"><Link href="/" className="hover:text-ink">Home</Link> / <span>Shop</span></nav>
-        <h1 className="heading text-5xl">{title}</h1>
+    <div className="container-page py-8 sm:py-12">
+      <div className="mb-6 border-b border-ink/8 pb-6 sm:mb-10 sm:pb-8">
+        <nav className="mb-2 text-sm text-ink/50"><Link href="/" className="hover:text-ink">Home</Link> / <span>Shop</span></nav>
+        <h1 className="heading text-4xl sm:text-5xl">{title}</h1>
         <p className="mt-2 text-ink/60">{total} product{total === 1 ? "" : "s"}</p>
       </div>
 
-      <div className="grid gap-10 lg:grid-cols-[220px_1fr]">
-        <aside className="space-y-8 text-sm">
-          <form action="/products" className="lg:hidden">
-            <input name="q" defaultValue={q} placeholder="Search…" className="input" />
-          </form>
+      {/* Mobile: scrollable category chips + collapsible filter/sort panel */}
+      <div className="mb-6 space-y-3 lg:hidden">
+        <div className="-mx-4 flex gap-2 overflow-x-auto px-4 pb-1 [scrollbar-width:none] sm:-mx-6 sm:px-6">{categoryLinks}</div>
+        <details className="group rounded-2xl border border-ink/10 bg-white">
+          <summary className="flex cursor-pointer list-none items-center justify-between px-4 py-3 text-sm font-medium">
+            <span>Filter & sort{activeFilters > 0 && <span className="ml-2 rounded-full bg-brand px-2 py-0.5 text-xs text-white">{activeFilters}</span>}</span>
+            <span className="text-lg text-ink/50 transition group-open:rotate-45" aria-hidden>+</span>
+          </summary>
+          <div className="grid gap-5 border-t border-ink/8 p-4 text-sm sm:grid-cols-2">{filterLinks}</div>
+        </details>
+      </div>
+
+      <div className="grid grid-cols-1 gap-10 lg:grid-cols-[220px_minmax(0,1fr)]">
+        <aside className="hidden space-y-8 text-sm lg:block">
           <div>
-            <p className="mb-3 text-xs font-semibold tracking-[0.15em] text-ink/50 uppercase">Category</p>
-            <ul className="flex flex-wrap gap-2 lg:flex-col lg:gap-1">
-              <li><Link href={href({ category: "", page: "" })} className={`block rounded-full px-3 py-1.5 lg:rounded-lg ${!category ? "bg-ink text-white" : "bg-white hover:bg-sand lg:bg-transparent"}`}>All</Link></li>
-              {categories.map((c) => (
-                <li key={c.id}>
-                  <Link href={href({ category: c.slug, page: "" })} className={`block rounded-full px-3 py-1.5 lg:rounded-lg ${category === c.slug ? "bg-ink text-white" : "bg-white hover:bg-sand lg:bg-transparent"}`}>{c.name}</Link>
-                </li>
-              ))}
-            </ul>
+            <p className="mb-2 text-xs font-semibold tracking-[0.15em] text-ink/50 uppercase">Category</p>
+            <div className="flex flex-col gap-1">{categoryLinks}</div>
           </div>
-          <div>
-            <p className="mb-3 text-xs font-semibold tracking-[0.15em] text-ink/50 uppercase">Filter</p>
-            <div className="flex flex-wrap gap-2 lg:flex-col lg:gap-1">
-              <Link href={href({ sale: sale ? "" : "1", page: "" })} className={`flex items-center gap-2 rounded-lg px-3 py-1.5 ${sale ? "font-medium text-accent" : "hover:bg-sand"}`}>
-                <span className={`grid h-4 w-4 place-items-center rounded border ${sale ? "border-accent bg-accent text-white" : "border-ink/30"}`}>{sale && "✓"}</span> On sale
-              </Link>
-              <Link href={href({ stock: inStock ? "" : "1", page: "" })} className={`flex items-center gap-2 rounded-lg px-3 py-1.5 ${inStock ? "font-medium text-brand" : "hover:bg-sand"}`}>
-                <span className={`grid h-4 w-4 place-items-center rounded border ${inStock ? "border-brand bg-brand text-white" : "border-ink/30"}`}>{inStock && "✓"}</span> In stock only
-              </Link>
-            </div>
-          </div>
-          <div>
-            <p className="mb-3 text-xs font-semibold tracking-[0.15em] text-ink/50 uppercase">Sort by</p>
-            <div className="flex flex-wrap gap-2 lg:flex-col lg:gap-1">
-              {SORTS.map(([value, label]) => (
-                <Link key={value} href={href({ sort: value === "featured" ? "" : value, page: "" })} className={`rounded-lg px-3 py-1.5 ${sort === value ? "bg-sand font-medium" : "hover:bg-sand"}`}>{label}</Link>
-              ))}
-            </div>
-          </div>
+          {filterLinks}
         </aside>
 
         <div>
@@ -112,7 +134,7 @@ export default async function ProductsPage({ searchParams }: PageProps<"/product
               <Link href="/products" className="btn mt-6">Clear filters</Link>
             </div>
           ) : (
-            <div className="grid grid-cols-2 gap-x-4 gap-y-10 md:grid-cols-3">
+            <div className="grid grid-cols-2 gap-x-3 gap-y-8 sm:gap-x-4 sm:gap-y-10 md:grid-cols-3">
               {products.map((p, i) => <ProductCard key={p.id} product={p} wished={wished.has(p.id)} priority={i < 3} />)}
             </div>
           )}

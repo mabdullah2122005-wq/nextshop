@@ -39,8 +39,9 @@ export function CouponForm() {
   }
 
   return (
-    <form onSubmit={onSubmit} className="card grid gap-4 p-6 sm:grid-cols-2 lg:grid-cols-6 lg:items-end">
-      <div className="lg:col-span-1">
+    <form onSubmit={onSubmit} className="card grid grid-cols-2 gap-4 p-4 sm:p-6 lg:grid-cols-6 lg:items-end">
+      <p className="col-span-2 font-semibold lg:col-span-6">Create a code</p>
+      <div className="col-span-2 sm:col-span-1">
         <label className="label" htmlFor="code">Code</label>
         <input id="code" name="code" required minLength={3} placeholder="SUMMER20" className="input uppercase" />
       </div>
@@ -63,12 +64,12 @@ export function CouponForm() {
         <label className="label" htmlFor="maxUses">Max uses</label>
         <input id="maxUses" name="maxUses" type="number" min={1} placeholder="Unlimited" className="input" />
       </div>
-      <div>
+      <div className="col-span-2 sm:col-span-1">
         <label className="label" htmlFor="expiresAt">Expires</label>
         <input id="expiresAt" name="expiresAt" type="date" className="input" />
       </div>
-      {error && <p className="rounded-lg bg-red-50 p-2 text-sm text-red-700 sm:col-span-2 lg:col-span-5">{error}</p>}
-      <button disabled={saving} className="btn sm:col-span-2 lg:col-span-1 lg:col-start-6">{saving ? "Creating…" : "Create code"}</button>
+      {error && <p className="col-span-2 rounded-lg bg-red-50 p-2 text-sm text-red-700 lg:col-span-5">{error}</p>}
+      <button disabled={saving} className="btn col-span-2 lg:col-span-1 lg:col-start-6">{saving ? "Creating…" : "Create code"}</button>
     </form>
   );
 }

@@ -16,17 +16,19 @@ export function NewsletterForm({ dark = false }: { dark?: boolean }) {
   if (state === "done") return <p className={dark ? "text-white" : "text-brand"}>Thanks! You’re on the list. ✓</p>;
 
   return (
-    <form onSubmit={onSubmit} className="flex w-full max-w-md gap-2">
+    <div className="w-full max-w-md">
+    {state === "error" && <p className={`mb-2 text-sm ${dark ? "text-red-200" : "text-red-600"}`}>Please enter a valid email address.</p>}
+    <form onSubmit={onSubmit} className="flex w-full gap-2">
       <input
         name="email"
         type="email"
         required
         placeholder="Your email address"
         aria-label="Email address"
-        className={`flex-1 rounded-full px-5 py-3 text-sm outline-none ${dark ? "bg-white/10 text-white placeholder:text-white/50 focus:bg-white/15" : "border border-ink/15 bg-white"}`}
+        className={`min-w-0 flex-1 rounded-full px-5 py-3 text-sm outline-none ${dark ? "bg-white/10 text-white placeholder:text-white/50 focus:bg-white/15" : "border border-ink/15 bg-white"}`}
       />
-      <button disabled={state === "loading"} className={dark ? "btn-light" : "btn"}>{state === "loading" ? "…" : "Subscribe"}</button>
-      {state === "error" && <span className="sr-only">Please enter a valid email</span>}
+      <button disabled={state === "loading"} className={`shrink-0 ${dark ? "btn-light" : "btn"}`}>{state === "loading" ? "…" : "Subscribe"}</button>
     </form>
+    </div>
   );
 }

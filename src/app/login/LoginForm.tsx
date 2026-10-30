@@ -47,7 +47,7 @@ export function LoginForm() {
       </div>
       {error && <p className="rounded bg-red-50 p-2 text-sm text-red-700">{error}</p>}
       <button disabled={loading} className="btn w-full">{loading ? "Signing in…" : "Sign in"}</button>
-      <p className="text-center text-sm text-stone-600">
+      <p className="text-center text-sm text-ink/60">
         New here? <Link href="/register" className="text-brand hover:underline">Create an account</Link>
       </p>
     </form>

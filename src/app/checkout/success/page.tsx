@@ -22,7 +22,7 @@ export default async function SuccessPage({ searchParams }: PageProps<"/checkout
       </p>
       {order && (
         <div className="card mt-8 p-5 text-left">
-          <p className="text-sm text-stone-500">Order {shortId(order.id)}</p>
+          <p className="text-sm text-ink/50">Order {shortId(order.id)}</p>
           <ul className="mt-3 space-y-1 text-sm">
             {order.items.map((i) => (
               <li key={i.id} className="flex justify-between">

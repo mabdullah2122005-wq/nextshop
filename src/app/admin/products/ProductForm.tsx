@@ -65,14 +65,14 @@ export function ProductForm({ categories, initial = empty }: { categories: Categ
   }
 
   return (
-    <form onSubmit={onSubmit} className="card grid max-w-2xl gap-4 p-6">
+    <form onSubmit={onSubmit} className="card grid max-w-2xl gap-4 p-4 sm:p-6">
       <div className="grid gap-4 sm:grid-cols-2">
         <div>
           <label className="label" htmlFor="name">Name</label>
           <input id="name" name="name" defaultValue={initial.name} required className="input" />
         </div>
         <div>
-          <label className="label" htmlFor="slug">Slug <span className="font-normal text-stone-400">(auto if blank)</span></label>
+          <label className="label" htmlFor="slug">Slug <span className="font-normal text-ink/40">(auto if blank)</span></label>
           <input id="slug" name="slug" defaultValue={initial.slug} pattern="[a-z0-9-]*" className="input" />
         </div>
       </div>
@@ -107,14 +107,14 @@ export function ProductForm({ categories, initial = empty }: { categories: Categ
         <label className="label" htmlFor="imageUrl">Image URL</label>
         <input id="imageUrl" name="imageUrl" type="url" defaultValue={initial.imageUrl} required className="input" />
       </div>
-      <div className="flex gap-6 text-sm">
-        <label className="flex items-center gap-2"><input type="checkbox" name="active" defaultChecked={initial.active} /> Visible in store</label>
-        <label className="flex items-center gap-2"><input type="checkbox" name="featured" defaultChecked={initial.featured} /> Featured on home page</label>
+      <div className="flex flex-col gap-1 text-sm sm:flex-row sm:gap-6">
+        <label className="flex items-center gap-3 py-2"><input type="checkbox" name="active" defaultChecked={initial.active} className="h-5 w-5 accent-brand" /> Visible in store</label>
+        <label className="flex items-center gap-3 py-2"><input type="checkbox" name="featured" defaultChecked={initial.featured} className="h-5 w-5 accent-brand" /> Featured on home page</label>
       </div>
-      {error && <p className="rounded bg-red-50 p-2 text-sm text-red-700">{error}</p>}
-      <div className="flex justify-between">
-        <button disabled={saving} className="btn">{saving ? "Saving…" : isEdit ? "Save changes" : "Create product"}</button>
-        {isEdit && <button type="button" onClick={onDelete} className="text-sm text-red-600 hover:underline">Delete</button>}
+      {error && <p className="rounded-lg bg-red-50 p-2 text-sm text-red-700">{error}</p>}
+      <div className="flex flex-col-reverse gap-3 sm:flex-row sm:items-center sm:justify-between">
+        {isEdit && <button type="button" onClick={onDelete} className="rounded-full py-3 text-sm text-red-600 hover:bg-red-50 sm:order-2 sm:px-4">Delete product</button>}
+        <button disabled={saving} className="btn sm:order-1">{saving ? "Saving…" : isEdit ? "Save changes" : "Create product"}</button>
       </div>
     </form>
   );

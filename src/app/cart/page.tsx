@@ -76,29 +76,29 @@ export default function CartPage() {
 
   return (
     <div className="container-page py-12">
-      <h1 className="heading text-5xl">Cart</h1>
-      <div className="mt-10 grid gap-10 lg:grid-cols-[1fr_380px]">
+      <h1 className="heading text-4xl sm:text-5xl">Cart</h1>
+      <div className="mt-8 grid grid-cols-1 gap-8 lg:mt-10 lg:grid-cols-[minmax(0,1fr)_380px] lg:gap-10">
         <ul className="divide-y divide-ink/8 border-y border-ink/8">
           {items.map((item) => (
             <li key={item.productId} className="flex gap-5 py-6">
-              <Link href={`/products/${item.slug}`} className="relative h-32 w-28 shrink-0 overflow-hidden rounded-2xl bg-sand">
+              <Link href={`/products/${item.slug}`} className="relative h-28 w-24 shrink-0 overflow-hidden rounded-2xl bg-sand sm:h-32 sm:w-28">
                 <Image src={item.imageUrl} alt={item.name} fill sizes="112px" className="object-cover" />
               </Link>
-              <div className="flex flex-1 flex-col">
-                <div className="flex justify-between gap-4">
-                  <div>
-                    <Link href={`/products/${item.slug}`} className="text-lg font-medium hover:text-brand">{item.name}</Link>
+              <div className="flex min-w-0 flex-1 flex-col">
+                <div className="flex justify-between gap-3">
+                  <div className="min-w-0">
+                    <Link href={`/products/${item.slug}`} className="font-medium leading-snug hover:text-brand sm:text-lg">{item.name}</Link>
                     <p className="text-sm text-ink/50">{formatPrice(item.priceCents)}</p>
                   </div>
-                  <p className="text-lg font-medium">{formatPrice(item.priceCents * item.quantity)}</p>
+                  <p className="shrink-0 font-medium sm:text-lg">{formatPrice(item.priceCents * item.quantity)}</p>
                 </div>
-                <div className="mt-auto flex items-center justify-between">
+                <div className="mt-auto flex items-center justify-between pt-2">
                   <div className="flex items-center rounded-full border border-ink/15 bg-white">
-                    <button onClick={() => { setQuantity(item.productId, item.quantity - 1); setCoupon(null); }} className="px-4 py-2 text-lg leading-none" aria-label={`Decrease ${item.name}`}>−</button>
-                    <span className="w-8 text-center">{item.quantity}</span>
-                    <button onClick={() => { setQuantity(item.productId, item.quantity + 1); setCoupon(null); }} className="px-4 py-2 text-lg leading-none" aria-label={`Increase ${item.name}`}>+</button>
+                    <button onClick={() => { setQuantity(item.productId, item.quantity - 1); setCoupon(null); }} className="grid h-10 w-10 place-items-center text-lg" aria-label={`Decrease ${item.name}`}>−</button>
+                    <span className="w-6 text-center">{item.quantity}</span>
+                    <button onClick={() => { setQuantity(item.productId, item.quantity + 1); setCoupon(null); }} className="grid h-10 w-10 place-items-center text-lg" aria-label={`Increase ${item.name}`}>+</button>
                   </div>
-                  <button onClick={() => { remove(item.productId); setCoupon(null); }} className="text-sm text-ink/50 hover:text-red-600">Remove</button>
+                  <button onClick={() => { remove(item.productId); setCoupon(null); }} className="px-1 py-2 text-sm text-ink/50 hover:text-red-600">Remove</button>
                 </div>
               </div>
             </li>
@@ -111,7 +111,7 @@ export default function CartPage() {
           <form onSubmit={applyCoupon} className="border-t border-ink/8 pt-5">
             <label htmlFor="code" className="label flex items-center gap-1.5"><TagIcon /> Discount code</label>
             <div className="flex gap-2">
-              <input id="code" name="code" placeholder="e.g. WELCOME10" className="input uppercase" defaultValue={coupon?.code} />
+              <input id="code" name="code" placeholder="e.g. WELCOME10" autoCapitalize="characters" className="input min-w-0 uppercase placeholder:normal-case" defaultValue={coupon?.code} />
               <button disabled={checking} className="btn-outline px-5">{checking ? "…" : "Apply"}</button>
             </div>
             {couponError && <p className="mt-2 text-sm text-red-600">{couponError}</p>}

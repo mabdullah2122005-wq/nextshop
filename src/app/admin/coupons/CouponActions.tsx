@@ -16,9 +16,9 @@ export function CouponActions({ id, active }: { id: string; active: boolean }) {
   }
 
   return (
-    <div className="flex justify-end gap-3 text-sm">
-      <button onClick={toggle} className="text-brand hover:underline">{active ? "Disable" : "Enable"}</button>
-      <button onClick={remove} className="text-red-600 hover:underline">Delete</button>
+    <div className="flex justify-end gap-1 text-sm">
+      <button onClick={toggle} className="rounded-lg px-3 py-2 text-brand hover:bg-cream">{active ? "Disable" : "Enable"}</button>
+      <button onClick={remove} className="rounded-lg px-3 py-2 text-red-600 hover:bg-red-50">Delete</button>
     </div>
   );
 }

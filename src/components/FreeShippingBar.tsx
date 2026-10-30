@@ -1,4 +1,4 @@
-import { formatPrice } from "@/lib/format";
+import { formatPrice, formatPriceShort } from "@/lib/format";
 import { FREE_SHIPPING_CENTS } from "@/lib/shipping";
 
 export function FreeShippingBar({ subtotalCents }: { subtotalCents: number }) {
@@ -13,7 +13,7 @@ export function FreeShippingBar({ subtotalCents }: { subtotalCents: number }) {
           <>🎉 You’ve unlocked <strong>free shipping</strong></>
         )}
       </p>
-      <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-sand">
+      <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-sand" role="progressbar" aria-valuenow={pct} aria-valuemin={0} aria-valuemax={100} aria-label={`Free shipping at ${formatPriceShort(FREE_SHIPPING_CENTS)}`}>
         <div className="h-full rounded-full bg-brand transition-all duration-500" style={{ width: `${pct}%` }} />
       </div>
     </div>
